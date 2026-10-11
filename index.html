@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ClipKaro – Lambi video se best short clips</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=Hind:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#15112b;--s:#211b3f;--s2:#2d2652;--tx:#f4f1ff;--mut:#a9a1d1;--pk:#ff4f9a;--gd:#ffcf4a;--ln:#3a3268}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.55 Hind,system-ui,sans-serif;padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px)}
+.strip{height:22px;background:repeating-linear-gradient(90deg,var(--bg) 0 12px,var(--s2) 12px 16px,var(--bg) 16px 28px);border-bottom:1px solid var(--ln)}
+main{max-width:680px;margin:0 auto;padding:28px 18px 40px}
+h1{font:800 clamp(2.1rem,9vw,3.3rem)/1.02 "Bricolage Grotesque",sans-serif;letter-spacing:-.03em;margin:0 0 14px}
+h1 span{color:var(--pk)}
+.sub{color:var(--mut);margin:0 0 26px;max-width:46ch}
+h2{font:600 1.1rem "Bricolage Grotesque",sans-serif;margin:0 0 12px}
+.box{background:var(--s);border:1px solid var(--ln);border-radius:6px 22px 6px 22px;padding:18px;margin-bottom:16px}
+.drop{display:block;border:2px dashed var(--pk);border-radius:12px;padding:26px 14px;text-align:center;cursor:pointer;color:var(--tx)}
+.drop b{display:block;font:800 1.25rem "Bricolage Grotesque",sans-serif}
+.drop small{color:var(--mut)}
+input[type=file]{position:absolute;opacity:0;width:1px;height:1px}
+.drop:focus-within{outline:3px solid var(--gd);outline-offset:3px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+label{display:block;font-weight:600;margin-bottom:5px;font-size:.95rem}
+select,input[type=number]{width:100%;padding:11px;background:var(--bg);color:var(--tx);border:1px solid var(--ln);border-radius:10px;font:inherit}
+.step{display:flex;gap:6px}.step input{text-align:center}
+.step button{width:46px;padding:0;background:var(--s2);color:var(--tx);font-size:1.3rem}
+.chk{display:flex;gap:10px;align-items:center;margin:16px 0 4px;font-weight:600}
+.chk input{width:22px;height:22px;accent-color:var(--pk)}
+button{font:600 1rem "Bricolage Grotesque",sans-serif;border:0;border-radius:12px;padding:14px 18px;cursor:pointer;background:var(--pk);color:#fff;width:100%}
+button.alt{background:transparent;border:1px solid var(--ln);color:var(--tx);margin-top:10px}
+button:disabled{opacity:.5;cursor:not-allowed}
+:focus-visible{outline:3px solid var(--gd);outline-offset:2px}
+video,#tl{width:100%;display:block;border-radius:10px;background:#000}
+video{max-height:52vh}
+#tl{height:84px;background:var(--bg);margin-top:12px}
+progress{width:100%;height:10px;accent-color:var(--pk);margin-top:14px}
+#st{margin:8px 0 0;color:var(--mut)}#st.err{color:#ff8f8f}
+.hide{display:none}
+.clips{display:grid;gap:16px}
+.clip{background:var(--s);border:1px solid var(--ln);border-radius:6px 22px 6px 22px;padding:14px}
+.clip video{max-height:60vh}
+.clip h3{margin:0 0 4px;font:800 1.1rem "Bricolage Grotesque",sans-serif}
+.clip p{margin:0 0 10px;color:var(--mut);font-size:.9rem}
+a.dl{display:block;text-align:center;margin-top:10px;padding:12px;border-radius:12px;background:var(--gd);color:#241a00;font:800 1rem "Bricolage Grotesque",sans-serif;text-decoration:none}
+.note{color:var(--mut);font-size:.85rem}
+@media (prefers-reduced-motion:no-preference){.clip{animation:in .35s ease-out}@keyframes in{from{opacity:0;transform:translateY(8px)}}}
+</style>
+</head>
+<body>
+<div class="strip" aria-hidden="true"></div>
+<main>
+<h1>Ek lambi video.<br><span>Kai best clips.</span></h1>
+<p class="sub">Bas batao kitne clips chahiye. ClipKaro sabse dumdaar hisse khud dhoondhta hai aur captions ke saath short video bana deta hai. Video aapke device se bahar nahi jaati.</p>
+
+<div class="box">
+  <h2>1. Video chuno</h2>
+  <label class="drop" for="file"><b id="fname">Yahan tap karke video chuno</b><small>MP4, MOV, WebM</small></label>
+  <input id="file" type="file" accept="video/*">
+</div>
+
+<div id="setup" class="box hide">
+  <h2>2. Kitne clips chahiye?</h2>
+  <div class="grid">
+    <div><label for="n">Clips ki ginti</label>
+      <div class="step"><button type="button" id="minus" aria-label="Kam karo">−</button><input id="n" type="number" min="1" max="20" value="3"><button type="button" id="plus" aria-label="Zyada karo">+</button></div></div>
+    <div><label for="len">Har clip ki length</label>
+      <select id="len"><option value="15">15 second</option><option value="20">20 second</option><option value="30" selected>30 second</option><option value="45">45 second</option><option value="60">60 second</option></select></div>
+    <div><label for="ratio">Size</label>
+      <select id="ratio"><option value="v">Vertical 9:16</option><option value="s">Square 1:1</option><option value="o">Original</option></select></div>
+    <div><label for="lang">Bolchaal ki zubaan</label>
+      <select id="lang"><option value="hindi">Hindi</option><option value="urdu">Urdu</option><option value="english">English</option><option value="auto">Auto pehchano</option></select></div>
+  </div>
+  <label class="chk"><input type="checkbox" id="cap" checked> Auto captions lagao</label>
+  <div id="qwrap" style="margin-top:10px"><label for="q">Caption quality</label>
+    <select id="q"><option value="Xenova/whisper-base">Behtar (pehli baar ~80 MB download)</option><option value="Xenova/whisper-tiny">Tez (pehli baar ~40 MB download)</option></select></div>
+  <div style="margin-top:18px"><button id="go" type="button">Best clips banao</button>
+  <button id="stop" type="button" class="alt hide">Roko</button></div>
+  <progress id="pg" class="hide" max="1" value="0"></progress>
+  <p id="st" role="status"></p>
+</div>
+
+<div id="tlbox" class="box hide">
+  <h2>Ye hisse chune gaye</h2>
+  <video id="player" playsinline controls preload="auto"></video>
+  <canvas id="tl" aria-label="Awaaz ka graph, chune hue hisse gulabi mein"></canvas>
+  <p class="note">Gulabi hisse sabse zyada awaaz aur bolchaal wale hain. Number clip ka rank hai.</p>
+</div>
+
+<div id="res" class="clips"></div>
+<p class="note">Clip real-time mein record hoti hai, isliye 30 second ki clip mein ~30 second lagte hain. Process ke dauran tab khula rakho. Captions ke liye internet chahiye (model ek baar download hota hai). Behtar results ke liye 1 ghante tak ki video rakho.</p>
+</main>
+
+<script>
+const $=id=>document.getElementById(id), SR=16000, player=$('player');
+let file,url,pcm,dur,audioCtx,dest,speaker,asr,asrName,busy=false,cancel=false;
+const stage=(t,e)=>{$('st').textContent=t;$('st').className=e?'err':''};
+const pad=s=>Math.floor(s/60)+':'+String(Math.floor(s%60)).padStart(2,'0');
+
+$('file').onchange=e=>{
+  const f=e.target.files[0]; if(!f)return;
+  file=f; if(url)URL.revokeObjectURL(url); url=URL.createObjectURL(f);
+  player.src=url; player.load(); $('fname').textContent=f.name;
+  $('setup').classList.remove('hide'); $('res').innerHTML=''; $('tlbox').classList.add('hide');
+  stage('Video load ho rahi hai...');
+  $('tlbox').classList.remove('hide');
+  $('setup').scrollIntoView({behavior:'smooth'});
+};
+player.onloadedmetadata=()=>stage('Video tayyar hai ('+pad(player.duration)+'). Clips ki ginti chuno aur "Best clips banao" dabao.');
+player.onerror=()=>stage('Ye video is browser mein nahi chal rahi (codec support nahi). MP4 (H.264) wali video try karo.',true);
+window.addEventListener('error',e=>stage('Error: '+e.message,true));
+window.addEventListener('unhandledrejection',e=>stage('Error: '+((e.reason&&e.reason.message)||e.reason),true));
+$('minus').onclick=()=>$('n').value=Math.max(1,+$('n').value-1);
+$('plus').onclick=()=>$('n').value=Math.min(20,+$('n').value+1);
+$('cap').onchange=()=>{$('qwrap').classList.toggle('hide',!$('cap').checked);$('lang').disabled=!$('cap').checked};
+$('stop').onclick=()=>{cancel=true;stage('Ruk rahe hain...')};
+
+async function decodePCM(){
+  const buf=await file.arrayBuffer();
+  const ctx=new (window.AudioContext||window.webkitAudioContext)();
+  const dec=await ctx.decodeAudioData(buf); ctx.close();
+  const off=new OfflineAudioContext(1,Math.ceil(dec.duration*SR),SR);
+  const s=off.createBufferSource(); s.buffer=dec; s.connect(off.destination); s.start();
+  return (await off.startRendering()).getChannelData(0);
+}
+function energy(p){
+  const n=Math.floor(p.length/SR), e=new Float32Array(n);
+  for(let s=0;s<n;s++){let a=0;const o=s*SR;for(let i=0;i<SR;i+=4){const v=p[o+i];a+=v*v}e[s]=Math.sqrt(a/(SR/4))}
+  return e;
+}
+function pick(e,L,N){
+  const n=e.length; if(n<=L)return [{start:0}];
+  const sorted=[...e].sort((a,b)=>a-b), med=sorted[Math.floor(n/2)], thr=Math.max(med*.6,.004);
+  const P=[0],Q=[0],A=[0];
+  for(let i=0;i<n;i++){P.push(P[i]+e[i]);Q.push(Q[i]+e[i]*e[i]);A.push(A[i]+(e[i]>thr?1:0))}
+  const c=[];
+  for(let s=0;s+L<=n;s++){
+    const m=(P[s+L]-P[s])/L, v=Math.max(0,(Q[s+L]-Q[s])/L-m*m), act=(A[s+L]-A[s])/L;
+    c.push({start:s,score:m*(.4+.6*act)+.5*Math.sqrt(v)});
+  }
+  c.sort((a,b)=>b.score-a.score);
+  const out=[];
+  for(const x of c){if(out.length>=N)break;if(out.every(o=>Math.abs(o.start-x.start)>=L))out.push(x)}
+  return out;
+}
+function drawTL(e,picks,L){
+  const c=$('tl'),d=devicePixelRatio||1,w=c.clientWidth,h=84; c.width=w*d;c.height=h*d;
+  const g=c.getContext('2d'); g.scale(d,d);
+  const n=e.length, mx=[...e].sort((a,b)=>a-b)[Math.floor(n*.97)]||1, bars=Math.floor(w/4);
+  for(let b=0;b<bars;b++){
+    const s0=Math.floor(b/bars*n), s1=Math.max(s0+1,Math.floor((b+1)/bars*n)); let m=0;
+    for(let i=s0;i<s1&&i<n;i++)m=Math.max(m,e[i]);
+    const bh=Math.max(3,Math.min(1,m/mx)*(h-20)), mid=(s0+s1)/2;
+    g.fillStyle=picks.some(p=>mid>=p.start&&mid<p.start+L)?'#ff4f9a':'#4a4180';
+    g.fillRect(b*4,h-bh,3,bh);
+  }
+  g.fillStyle='#ffcf4a';g.font='600 12px Hind,sans-serif';
+  picks.forEach((p,i)=>g.fillText(i+1,p.start/n*w+2,12));
+}
+
+async function getASR(){
+  const name=$('q').value;
+  if(asr&&asrName===name)return asr;
+  const {pipeline,env}=await import('https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.2');
+  env.allowLocalModels=false;
+  asr=await pipeline('automatic-speech-recognition',name,{progress_callback:p=>{
+    if(p.status==='progress')stage('Caption model download ho raha hai: '+Math.round(p.progress)+'%')}});
+  asrName=name; return asr;
+}
+async function transcribe(slice,L){
+  const a=await getASR(), o={task:'transcribe',return_timestamps:true,chunk_length_s:30};
+  if($('lang').value!=='auto')o.language=$('lang').value;
+  const out=await a(slice,o), lines=[];
+  for(const ch of out.chunks||[]){
+    const t=(ch.text||'').trim(); if(!t)continue;
+    const s=ch.timestamp[0]??0; let e=ch.timestamp[1]??s+3; if(e<=s)e=s+3; e=Math.min(e,L);
+    const w=t.split(/\s+/), gr=[]; for(let i=0;i<w.length;i+=4)gr.push(w.slice(i,i+4).join(' '));
+    const tot=gr.reduce((x,y)=>x+y.length,0); let cur=s;
+    for(const x of gr){const d=(e-s)*x.length/tot;lines.push({s:cur,e:cur+d,t:x});cur+=d}
+  }
+  return lines;
+}
+
+function setupAudio(){
+  if(audioCtx)return;
+  audioCtx=new (window.AudioContext||window.webkitAudioContext)();
+  const src=audioCtx.createMediaElementSource(player);
+  dest=audioCtx.createMediaStreamDestination(); speaker=audioCtx.createGain();
+  src.connect(dest); src.connect(speaker); speaker.connect(audioCtx.destination);
+}
+const seek=t=>new Promise(r=>{player.onseeked=()=>r();player.currentTime=t});
+function mimeType(){
+  return ['video/mp4;codecs=avc1,mp4a.40.2','video/mp4','video/webm;codecs=vp9,opus','video/webm;codecs=vp8,opus','video/webm']
+    .find(t=>window.MediaRecorder&&MediaRecorder.isTypeSupported(t));
+}
+function caption(g,cw,ch,text){
+  let fs=Math.round(cw*.064);
+  const set=()=>g.font=`800 ${fs}px "Bricolage Grotesque",Hind,system-ui,sans-serif`; set();
+  while(g.measureText(text).width>cw*.9&&fs>16){fs-=2;set()}
+  g.textAlign='center';g.textBaseline='middle';g.lineJoin='round';g.lineWidth=fs*.24;
+  g.strokeStyle='#000';g.fillStyle='#fff';
+  const y=ch*.8; g.strokeText(text,cw/2,y); g.fillText(text,cw/2,y);
+}
+async function record(start,end,mode,lines,onp){
+  const mime=mimeType(); if(!mime)throw new Error('Is browser mein recording support nahi hai. Chrome ya Safari use karo.');
+  const vw=player.videoWidth,vh=player.videoHeight; let cw,ch,sw=vw,sh=vh;
+  if(mode==='v'){cw=720;ch=1280;sw=Math.min(vw,vh*9/16)}
+  else if(mode==='s'){cw=ch=720;sw=sh=Math.min(vw,vh)}
+  else{const k=Math.min(1,1280/Math.max(vw,vh));cw=Math.round(vw*k/2)*2;ch=Math.round(vh*k/2)*2}
+  const sx=(vw-sw)/2, sy=(vh-sh)/2;
+  const cv=document.createElement('canvas'); cv.width=cw; cv.height=ch;
+  const g=cv.getContext('2d'), stream=cv.captureStream(30);
+  dest.stream.getAudioTracks().forEach(t=>stream.addTrack(t));
+  const rec=new MediaRecorder(stream,{mimeType:mime,videoBitsPerSecond:4e6}), chunks=[];
+  rec.ondataavailable=e=>{if(e.data.size)chunks.push(e.data)};
+  const done=new Promise(r=>rec.onstop=r);
+  const frame=()=>{
+    g.fillStyle='#000';g.fillRect(0,0,cw,ch);
+    g.drawImage(player,sx,sy,sw,sh,0,0,cw,ch);
+    const t=player.currentTime-start, l=lines.find(x=>t>=x.s&&t<x.e);
+    if(l)caption(g,cw,ch,l.t);
+  };
+  await seek(start); speaker.gain.value=0; frame(); rec.start(500); await player.play();
+  await new Promise(fin=>{
+    const tick=()=>{frame();onp(Math.min(1,(player.currentTime-start)/(end-start)));
+      if(cancel||player.currentTime>=end||player.ended){fin();return}requestAnimationFrame(tick)};
+    tick();
+  });
+  player.pause(); rec.stop(); await done; speaker.gain.value=1;
+  return {blob:new Blob(chunks,{type:mime.split(';')[0]}),ext:mime.startsWith('video/mp4')?'mp4':'webm'};
+}
+function addCard(i,start,L,r,hasCap){
+  const u=URL.createObjectURL(r.blob), d=document.createElement('div'); d.className='clip';
+  d.innerHTML='<h3></h3><p></p><video controls playsinline></video><a class="dl">Clip download karo</a>';
+  d.querySelector('h3').textContent='Clip '+(i+1)+(i===0?' (sabse best)':'');
+  d.querySelector('p').textContent=pad(start)+' se '+pad(start+L)+' tak'+(hasCap?' • captions ke saath':'');
+  d.querySelector('video').src=u;
+  const a=d.querySelector('a'); a.href=u; a.download='clip-'+(i+1)+'.'+r.ext;
+  $('res').appendChild(d);
+}
+
+$('go').onclick=async()=>{
+  if(busy)return;
+  if(!file)return stage('Pehle video chuno.',true);
+  try{setupAudio();audioCtx.resume()}catch(err){console.error(err)}
+  if(!isFinite(player.duration)){
+    stage('Video load ho rahi hai...'); player.load();
+    await new Promise(r=>{const t=setTimeout(r,8000);player.addEventListener('loadedmetadata',()=>{clearTimeout(t);r()},{once:true})});
+  }
+  if(!isFinite(player.duration)||player.duration<1)return stage('Video load nahi ho payi. Is page ko Claude ke andar nahi, Safari mein apni GitHub Pages link se kholo.',true);
+  busy=true;cancel=false;
+  $('go').disabled=true;$('stop').classList.remove('hide');$('pg').classList.remove('hide');$('pg').value=0;
+  $('res').innerHTML=''; player.pause(); player.controls=false;
+  try{
+    dur=player.duration; let L=Math.min(+$('len').value,Math.floor(dur)); if(L<1)throw new Error('Video bahut chhoti hai.');
+    let N=Math.min(+$('n').value,Math.max(1,Math.floor(dur/L)));
+    const caps=$('cap').checked, mode=$('ratio').value;
+    stage('Awaaz ka tajziya ho raha hai...'); let e,picks;
+    try{pcm=await decodePCM();e=energy(pcm);picks=pick(e,L,N)}
+    catch(err){pcm=null;e=new Float32Array(Math.ceil(dur)).fill(.3);
+      picks=Array.from({length:N},(_,i)=>({start:Math.floor((dur-L)*(N===1?.5:i/(N-1)))}));
+      stage('Awaaz padh nahi paye, isliye clips barabar doori par chune gaye.',true)}
+    $('tlbox').classList.remove('hide'); drawTL(e,picks,L);
+    if(caps)await getASR();
+    await document.fonts.ready; setupAudio(); await audioCtx.resume();
+    for(let i=0;i<picks.length&&!cancel;i++){
+      const s=picks[i].start; let lines=[];
+      if(caps&&pcm){stage('Clip '+(i+1)+': captions ban rahe hain...');
+        try{lines=await transcribe(pcm.slice(s*SR,(s+L)*SR),L)}catch(err){console.error(err)}}
+      stage('Clip '+(i+1)+'/'+picks.length+' ban rahi hai...');
+      const r=await record(s,s+L,mode,lines,p=>$('pg').value=(i+p)/picks.length);
+      if(r.blob.size)addCard(i,s,L,r,lines.length>0);
+    }
+    stage(cancel?'Roka gaya. Jo clips ban chuki hain wo neeche hain.':'Sab clips tayyar hain!');
+    $('pg').value=1;
+  }catch(err){stage('Kuch gadbad hui: '+err.message,true)}
+  finally{player.controls=true;if(speaker)speaker.gain.value=1;busy=false;$('go').disabled=false;$('stop').classList.add('hide')}
+};
+</script>
+</body>
+</html>
